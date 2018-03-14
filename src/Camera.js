@@ -381,6 +381,10 @@ export default class Camera extends Component {
     return CameraManager.setZoom(zoom);
   }
 
+  requestPermissions() {
+    return CameraManager.requestPermissions();
+  }
+
   checkPermissions(cb) {
     if (Platform.OS === 'ios') {
       return cb({});

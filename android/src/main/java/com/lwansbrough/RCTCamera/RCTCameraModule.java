@@ -559,12 +559,19 @@ public class RCTCameraModule extends ReactContextBaseJavaModule
                 camera.stopPreview();
                 camera.startPreview();
 
-                AsyncTask.execute(new Runnable() {
+                new Thread() {
                     @Override
                     public void run() {
                         processImage(new MutableImage(data), options, promise);
                     }
-                });
+                }.start();
+
+//                AsyncTask.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        processImage(new MutableImage(data), options, promise);
+//                    }
+//                });
 
                 mSafeToCapture = true;
             }
