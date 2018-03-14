@@ -739,6 +739,73 @@ public class RCTCameraModule extends ReactContextBaseJavaModule
         }
     }
 
+    @ReactMethod
+    public void requestPermissions() {
+        WritableMap params = getPermissions();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissions = new ArrayList<String>();
+
+            if (params.getBoolean("CAMERA") == false) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (params.getBoolean("READ_EXTERNAL_STORAGE") == false) {
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (params.getBoolean("WRITE_EXTERNAL_STORAGE") == false) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (params.getBoolean("READ_PHONE_STATE") == false) {
+                permissions.add(Manifest.permission.READ_PHONE_STATE);
+            }
+            if (params.getBoolean("RECORD_AUDIO") == false) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+
+            if (!permissions.isEmpty()) {
+                String[] perms = permissions.toArray(new String[0]);
+                _reactContext.getCurrentActivity().requestPermissions(perms, 123);
+            }
+        } else {
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", _reactContext.getPackageName(), null);
+            intent.setData(uri);
+            _reactContext.startActivity(intent);
+        }
+    }
+
+    @ReactMethod
+    public void checkPermissions(Callback cb) {
+        WritableMap params = getPermissions();
+
+        cb.invoke(params);
+    }
+
+    /*
+     * Check if Camera Permissions are granted
+     */
+    private WritableMap getPermissions() {
+        WritableMap params = Arguments.createMap();
+        String p1 = "android.permission.CAMERA";
+        String p2 = "android.permission.READ_EXTERNAL_STORAGE";
+        String p3 = "android.permission.WRITE_EXTERNAL_STORAGE";
+        String p4 = "android.permission.READ_PHONE_STATE";
+        String p5 = "android.permission.RECORD_AUDIO";
+
+        int r1 = _reactContext.checkCallingOrSelfPermission(p1);
+        int r2 = _reactContext.checkCallingOrSelfPermission(p2);
+        int r3 = _reactContext.checkCallingOrSelfPermission(p3);
+        int r4 = _reactContext.checkCallingOrSelfPermission(p4);
+        int r5 = _reactContext.checkCallingOrSelfPermission(p5);
+
+        params.putBoolean("CAMERA", r1 == PackageManager.PERMISSION_GRANTED ? true : false);
+        params.putBoolean("READ_EXTERNAL_STORAGE", r2 == PackageManager.PERMISSION_GRANTED ? true : false);
+        params.putBoolean("WRITE_EXTERNAL_STORAGE", r3 == PackageManager.PERMISSION_GRANTED ? true : false);
+        params.putBoolean("READ_PHONE_STATE", r4 == PackageManager.PERMISSION_GRANTED ? true : false);
+        params.putBoolean("RECORD_AUDIO", r5 == PackageManager.PERMISSION_GRANTED ? true : false);
+        return params;
+    }
+
     private File getOutputMediaFile(int type) {
         // Get environment directory type id from requested media type.
         String environmentDirectoryType;

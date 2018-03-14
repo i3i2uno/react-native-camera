@@ -380,6 +380,13 @@ export default class Camera extends Component {
 
     return CameraManager.setZoom(zoom);
   }
+
+  checkPermissions(cb) {
+    if (Platform.OS === 'ios') {
+      return cb({});
+    }
+    return CameraManager.checkPermissions(cb);
+  }
 }
 
 export const constants = Camera.constants;
