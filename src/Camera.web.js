@@ -227,7 +227,7 @@ export default class Camera extends Component {
 
                 // set canvas dimensions to video ones to not truncate picture
                 const videoElement = this.refs[CAMERA_REF];
-                const w = videoElement.clientWidth;
+                const w = this.Width;
                 const h = w / 1.334;//videoElement.clientHeight;
                 canvas.width = w;
                 canvas.height = h;
@@ -284,38 +284,44 @@ export default class Camera extends Component {
     componentDidMount() {
         var video = this.refs[CAMERA_REF];
         var vidContainer = this.refs['vidContainer'];
-        video.setAttribute('playsinline', '');
-        video.setAttribute('autoplay', '');
-        // video.setAttribute('muted', '');
-        const w = vidContainer._reactInternalInstance._renderedComponent._hostNode.clientWidth;
-        const h = vidContainer._reactInternalInstance._renderedComponent._hostNode.clientHeight;
-        video.style.width = w + 'px';
-        video.style.height = h + 'px';
 
-        /* Setting up the constraint */
-        var facingMode = this.props.type || CameraManager.Type.back; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
-        var constraints = {
-            audio: true,
-            video: {
-                // width: { exact: w }, 
-                // height: { exact: w / 1.7777777777777777 },
-                facingMode: facingMode
-            }
-        };
+        if (vidContainer && vidContainer.measure) {
+            vidContainer.measure((x, y, w, h, xy, yy) => {
+                this.Width = w;
+                this.Height = h;
+                video.setAttribute('playsinline', '');
+                video.setAttribute('autoplay', '');
+                // const w = vidContainer._reactInternalInstance._renderedComponent._hostNode.clientWidth;
+                // const h = vidContainer._reactInternalInstance._renderedComponent._hostNode.clientHeight;
+                video.style.width = this.Width + 'px';
+                video.style.height = this.Height + 'px';
 
-        /* Stream it to video element */
-        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-            this.Stream = stream;
-            video.srcObject = this.Stream;
-        }).catch(err => {
-            Alert.alert(
-                "Camera Error",
-                "We were unable to find your Webcam, or permissions were denied. If this continues to occur, you may have to clear your cache and try again.",
-                [
-                    { text: 'Okay', onPress: () => { } }
-                ]
-            )
-        });
+                /* Setting up the constraint */
+                var facingMode = this.props.type || CameraManager.Type.back; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
+                var constraints = {
+                    audio: true,
+                    video: {
+                        // width: { exact: w }, 
+                        // height: { exact: w / 1.7777777777777777 },
+                        facingMode: facingMode
+                    }
+                };
+
+                /* Stream it to video element */
+                navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+                    this.Stream = stream;
+                    video.srcObject = this.Stream;
+                }).catch(err => {
+                    Alert.alert(
+                        "Camera Error",
+                        "We were unable to find your Webcam, or permissions were denied. If this continues to occur, you may have to clear your cache and try again.",
+                        [
+                            { text: 'Okay', onPress: () => { } }
+                        ]
+                    )
+                });
+            })
+        }
     }
 
     render() {
