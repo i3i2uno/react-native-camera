@@ -227,8 +227,11 @@ export default class Camera extends Component {
 
                 // set canvas dimensions to video ones to not truncate picture
                 const videoElement = this.refs[CAMERA_REF];
-                const w = this.Width;
-                const h = w / 1.334;//videoElement.clientHeight;
+
+                const dc = 1.332;
+                const w = videoElement.offsetWidth;
+                const h = videoElement.offsetHeight;
+
                 canvas.width = w;
                 canvas.height = h;
 
