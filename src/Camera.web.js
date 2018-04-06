@@ -17,7 +17,11 @@ const CameraManager = {
         front: 'environment'
     },
     Orientation: {
-        auto: 'true'
+        auto: 'true',
+        portrait: 'portrait',
+        portraitUpsideDown: 'portraitUpsideDown',
+        landscapeLeft: 'landscapeLeft',
+        landscapeRight: 'landscapeRight'
     },
     CaptureMode: {
         still: 'true'
