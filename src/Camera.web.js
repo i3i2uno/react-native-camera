@@ -24,7 +24,8 @@ const CameraManager = {
         landscapeRight: 'landscapeRight'
     },
     CaptureMode: {
-        still: 'true'
+        still: 'true',
+        video: 'video'
     },
     CaptureTarget: {
         cameraRoll: 'true'
